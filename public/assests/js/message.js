@@ -7,7 +7,7 @@ $(document).ready(function(){
 
 var heightFrom; //  global variable
 // Websocket Connection Open
-var conn = new WebSocket("ws://192.168.43.138:8080");
+var conn = new WebSocket("ws://192.168.1.5:8080");
 
 // For send Message to Web Socket Server
 function sendTo(data)
@@ -200,7 +200,17 @@ function updateConversation(data) {
       var divElement1 = $("<div></div>").addClass("row message-body");
       var divElement2 = $("<div></div>").addClass("col-sm-12");
       var divElement3 = $("<div></div>");
-      var messageText = $("<div></div>").addClass("message-text").text(data[i].message);
+      var messageText = $("<div></div>").addClass("message-text");
+      
+      // Embed YouTube video if link presents in message.
+      var youtube_link = data[i].message.indexOf('https://www.youtube.com');
+      if(youtube_link !== -1) {
+          messageText.html(data[i].message + '<iframe width="100%" src="https://www.youtube.com/embed/' +
+          data[i].message.substring(youtube_link + 32, youtube_link + 43) + '" frameborder="0" allowfullscreen></iframe>');
+      }
+      else {
+          messageText.text(data[i].message);
+      }
       var spanElement = $("<span></span>").addClass("message-time pull-right").text(data[i].time);
 
       if (data[i]["sent_by"] !== data[i].start)
