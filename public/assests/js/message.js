@@ -7,7 +7,7 @@ $(document).ready(function(){
 
 var heightFrom; //  global variable
 // Websocket Connection Open
-var conn = new WebSocket("ws://192.168.1.5:8080");
+var conn = new WebSocket("ws://192.168.43.138:8080");
 
 // For send Message to Web Socket Server
 function sendTo(data)
@@ -211,6 +211,7 @@ function updateConversation(data) {
       else {
           messageText.text(data[i].message);
       }
+      
       var spanElement = $("<span></span>").addClass("message-time pull-right").text(data[i].time);
 
       if (data[i]["sent_by"] !== data[i].start)
