@@ -8,6 +8,7 @@ $(document).ready(function(){
 var heightFrom; //  global variable
 // Websocket Connection Open
 var conn = new WebSocket("ws://192.168.43.138:8080");
+var new_messages = 0;
 
 // For send Message to Web Socket Server
 function sendTo(data)
@@ -194,6 +195,14 @@ function updateConversation(data) {
       $("#conversation").append(divE1);
     }
     var noOfMessages = data.length - 1;
+    if (document.hidden) {
+        new_messages++;
+        document.title = '(' + new_messages + ') Messages';
+    }
+    else {
+        new_messages = 0;
+        document.title = 'Messages';
+    }
     for (var i = noOfMessages; i >= 1; i--) {
       // create element
       var divElement1 = $("<div></div>").addClass("row message-body");
@@ -425,6 +434,14 @@ conn.onmessage = function(e)
   $("body").on("change keyup paste", "#text_reply",
    function() {
     typing();
+  });
+  
+  $("body").on("mousemove",
+   function() {
+    if(new_messages > 0) {
+        document.title = 'Messages';
+        new_messages = 0;
+    }
   });
 
   $("body").on("click", ".reply-recording",
