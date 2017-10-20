@@ -135,6 +135,14 @@ class Chat implements MessageComponentInterface
             $msg->userId = $from->userId;
             $composeResult = $this->onCompose($msg);
             $from->send($composeResult);
+        } else if ($msg->type == 'typing') {
+            $msg->userId = $from->userId;
+            $msg->name = convert_uudecode(hex2bin($msg->name));
+            foreach ($this->clients as $client) {
+                if ($client->userId == $msg->name) {
+                    $client->send(json_encode(array('typing' => 'typing')));
+                }
+            }
         } else {
             $msg->userId = $from->userId;
             $msg->name = convert_uudecode(hex2bin($msg->name));

@@ -174,7 +174,6 @@ function setConversationDetails(details) {
 
 // Update Current Conversation
 function updateConversation(data) {
-
   var ele = document.getElementById("conversation");
   ele.innerHTML = "";
 
@@ -235,6 +234,7 @@ function updateConversation(data) {
       ele.scrollTop = $("#conversation")[0].scrollHeight - heightFrom;
     }
   }
+  
   setConversationDetails(data[0]);
 }
 
@@ -252,6 +252,16 @@ function reply() {
     };
     sendTo(msg);
   }
+}
+
+// Typing indication
+function typing() {
+  var id = $("#text_reply").attr("name");
+  var msg = {
+    "name": id,
+    "type": "typing"
+  };
+  sendTo(msg);
 }
 
 function notFound(eleId) {
@@ -357,7 +367,7 @@ function startDictation() {
 conn.onmessage = function(e)
 {
   var msg = JSON.parse(e.data);
-  // console.log(msg);
+
   if (!width()) {
     SideBar(msg.sidebar);
   } else {
@@ -388,6 +398,15 @@ conn.onmessage = function(e)
   if (typeof(msg.Compose) !== "undefined") {
     composeResult(msg.Compose);
   }
+  
+  if (typeof(msg.typing) !== "undefined") {
+     if($('#user_typing').length == 0) {
+        $('#conversation').append('<div class="row message-body" id="user_typing" style=""><div class="col-sm-12 message-main-receiver"><div class="receiver"><span class="message-time pull-right">typing...</span></div></div></div>');
+        var element = document.getElementById("conversation");
+        element.scrollTop = element.scrollHeight;
+        setTimeout(function() { $('#user_typing').remove(); }, 1000);
+     }
+  }
 };
 
 // Event Listeners
@@ -401,6 +420,11 @@ conn.onmessage = function(e)
   $("body").on("click", ".reply-send",
    function() {
     reply();
+  });
+  
+  $("body").on("change keyup paste", "#text_reply",
+   function() {
+    typing();
   });
 
   $("body").on("click", ".reply-recording",
