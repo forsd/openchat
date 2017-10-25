@@ -203,13 +203,21 @@ function updateConversation(data) {
       var messageText = $("<div></div>").addClass("message-text");
       
       // Embed YouTube video if link presents in message.
+      var result = anchorme(data[i].message.replace(/<(?:.|\n)*?>/gm, ''), { attributes:[ { name:"target", value:"_blank" } ] });
       var youtube_link = data[i].message.indexOf('https://www.youtube.com');
       if(youtube_link !== -1) {
-          messageText.html(data[i].message + '<iframe width="100%" src="https://www.youtube.com/embed/' +
-          data[i].message.substring(youtube_link + 32, youtube_link + 43) + '" frameborder="0" allowfullscreen></iframe>');
+          messageText.html(result + '<iframe width="100%" src="https://www.youtube.com/embed/' +
+            data[i].message.substring(youtube_link + 32, youtube_link + 43) + '" frameborder="0" allowfullscreen></iframe>');
       }
       else {
-          messageText.text(data[i].message);
+          youtube_link = data[i].message.indexOf('https://youtu.be/');
+          if(youtube_link !== -1) {
+              messageText.html(result + '<iframe width="100%" src="https://www.youtube.com/embed/' +
+                data[i].message.substring(youtube_link + 17, youtube_link + 28) + '" frameborder="0" allowfullscreen></iframe>');
+          } 
+          else {
+              messageText.html(result);
+          }             
       }
       
       var spanElement = $("<span></span>").addClass("message-time pull-right").text(data[i].time);
